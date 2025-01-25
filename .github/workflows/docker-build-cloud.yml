@@ -1,4 +1,4 @@
-name: ci
+name: CI - Docker Build and Push
 
 on:
   push:
@@ -29,8 +29,10 @@ jobs:
           install: true
 
       # Step 4: Build and Push Docker Image
-      - name: Build and push Docker image
+      - name: Build and Push Docker Image
         uses: docker/build-push-action@v6
         with:
+          push: ${{ github.event_name != 'pull_request' }} # Push only for non-PR events
           tags: "${{ secrets.DOCKER_USER }}/docker-build-cloud-demo:latest"
-          outputs: ${{ github.event_name == 'pull_request' && 'type=cacheonly' || 'type=registry' }}
+          cache-from: type=gha # Leverage GitHub Actions cache for faster builds
+          cache-to: type=gha,mode=max
