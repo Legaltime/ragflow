@@ -1,4 +1,4 @@
-name: CI - Build and Push Docker Image
+name: ci
 
 on:
   push:
@@ -20,7 +20,7 @@ jobs:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PAT }}
 
-      # Step 3: Set up Docker Buildx for Docker Build Cloud
+      # Step 3: Set up Docker Buildx
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
         with:
@@ -28,11 +28,9 @@ jobs:
           endpoint: "legaltime/legallens"
           install: true
 
-      # Step 4: Build and push Docker image
+      # Step 4: Build and Push Docker Image
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
-          # Set the image name and tag
           tags: "${{ secrets.DOCKER_USER }}/docker-build-cloud-demo:latest"
-          # Specify build options for caching or registry pushes
           outputs: ${{ github.event_name == 'pull_request' && 'type=cacheonly' || 'type=registry' }}
